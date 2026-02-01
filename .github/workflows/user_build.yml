@@ -1,0 +1,59 @@
+name: User Build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "app/boards/shields/supermini_macropad/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build SuperMini Macropad
+    container:
+      image: zmkfirmware/zmk-build-arm:stable
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache west modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-zephyr-modules
+        with:
+          path: |
+            modules/
+            tools/
+            zephyr/
+            bootloader/
+            zmk/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('app/west.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: West Init
+        run: west init -l app
+
+      - name: West Update
+        run: west update
+
+      - name: West Zephyr Export
+        run: west zephyr-export
+
+      - name: Build Firmware
+        run: west build -b esp32c3_devkitm -- -DSHIELD=supermini_macropad
+
+      - name: Archive Code
+        uses: actions/upload-artifact@v2
+        with:
+          name: supermini_macropad_firmware
+          path: build/zephyr/zmk.bin
+
+      - name: Archive UF2
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: supermini_macropad_uf2
+          path: build/zephyr/zmk.uf2

@@ -1,0 +1,10 @@
+file_format: "1"
+id: supermini_macropad
+name: SuperMini Macropad
+type: shield
+url: https://github.com/zmkfirmware/zmk/
+requires: []
+features:
+  - keys
+  - encoder
+  - underglow
