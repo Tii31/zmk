@@ -1,12 +1,9 @@
+# Copyright (c) 2026 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
 if SHIELD_SUPERMINI_MACROPAD
 
 config ZMK_KEYBOARD_NAME
     default "SuperMini Macropad"
-
-config EC11
-    default y
-
-config EC11_TRIGGER_GLOBAL_THREAD
-    default y
 
 endif
