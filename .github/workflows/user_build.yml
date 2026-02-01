@@ -5,33 +5,23 @@ on:
   push:
     paths:
       - "app/boards/shields/supermini_macropad/**"
+      - "app/boards/espressif/esp32c3_supermini/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     name: Build SuperMini Macropad
-    container:
-      image: zmkfirmware/zmk-build-arm:stable
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Cache west modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-zephyr-modules
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          path: |
-            modules/
-            tools/
-            zephyr/
-            bootloader/
-            zmk/
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('app/west.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          python-version: "3.11"
+
+      - name: Install West
+        run: pip install west
 
       - name: West Init
         run: west init -l app
@@ -42,18 +32,26 @@ jobs:
       - name: West Zephyr Export
         run: west zephyr-export
 
-      - name: Build Firmware
-        run: west build -b esp32c3_devkitm -- -DSHIELD=supermini_macropad
+      - name: Install Zephyr SDK
+        run: |
+          wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5/zephyr-sdk-0.16.5_linux-x86_64_minimal.tar.xz
+          tar xf zephyr-sdk-0.16.5_linux-x86_64_minimal.tar.xz
+          cd zephyr-sdk-0.16.5
+          ./setup.sh -t riscv64-zephyr-elf -h -c
+          cd ..
 
-      - name: Archive Code
-        uses: actions/upload-artifact@v2
+      - name: Install Python Dependencies
+        run: pip install -r zephyr/scripts/requirements.txt
+
+      - name: Build Firmware
+        run: |
+          export ZEPHYR_SDK_INSTALL_DIR=$PWD/zephyr-sdk-0.16.5
+          west build -b esp32c3_supermini -s app -- -DSHIELD=supermini_macropad
+
+      - name: Archive Firmware
+        uses: actions/upload-artifact@v4
         with:
           name: supermini_macropad_firmware
-          path: build/zephyr/zmk.bin
-
-      - name: Archive UF2
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: supermini_macropad_uf2
-          path: build/zephyr/zmk.uf2
+          path: |
+            build/zephyr/zmk.bin
+            build/zephyr/zmk.elf

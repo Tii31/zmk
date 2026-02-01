@@ -1,0 +1,27 @@
+if BOARD_ESP32C3_SUPERMINI
+
+config BOARD
+    default "esp32c3_supermini"
+
+config ZMK_KEYBOARD_NAME
+    default "SuperMini Macropad"
+
+config BT
+    default y
+
+config BT_CTLR
+    default BT
+
+config ZMK_BLE
+    default y
+
+config ZMK_USB
+    default n
+
+config ZMK_EC11
+    default y
+
+config ZMK_EC11_TRIGGER_GLOBAL_THREAD
+    default y
+
+endif # BOARD_ESP32C3_SUPERMINI
