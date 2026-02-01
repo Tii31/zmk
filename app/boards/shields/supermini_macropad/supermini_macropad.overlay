@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2026 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #include <dt-bindings/zmk/matrix_transform.h>
 
 / {
@@ -7,7 +13,7 @@
 
     kscan0: kscan_0 {
         compatible = "zmk,kscan-gpio-direct";
-        label = "KSCAN";
+        wakeup-source;
         input-gpios
             = <&gpio0 0 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
             , <&gpio0 1 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>
@@ -22,7 +28,6 @@
 
     encoder: encoder {
         compatible = "alps,ec11";
-        label = "ENCODER";
         a-gpios = <&gpio0 8 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         b-gpios = <&gpio0 10 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         steps = <80>;
