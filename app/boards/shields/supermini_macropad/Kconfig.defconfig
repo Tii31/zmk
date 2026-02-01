@@ -3,10 +3,10 @@ if SHIELD_SUPERMINI_MACROPAD
 config ZMK_KEYBOARD_NAME
     default "SuperMini Macropad"
 
-config ZMK_EC11
+config EC11
     default y
 
-config ZMK_EC11_TRIGGER_GLOBAL_THREAD
+config EC11_TRIGGER_GLOBAL_THREAD
     default y
 
 endif

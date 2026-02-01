@@ -1,4 +1,0 @@
-config BOARD_ESP32C3_SUPERMINI
-    bool "ESP32-C3 SuperMini"
-    depends on SOC_SERIES_ESP32C3
-    select SOC_ESP32C3
